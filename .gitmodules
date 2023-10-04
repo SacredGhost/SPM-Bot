@@ -1,0 +1,3 @@
+[submodule "SPM-Dictionary"]
+	path = SPM-Dictionary
+	url = https://github.com/SacredGhost/SPM-Dictionary
