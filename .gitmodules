@@ -1,3 +1,5 @@
 [submodule "SPM-Dictionary"]
 	path = SPMDictionary
 	url = https://github.com/SacredGhost/SPMDictionary
+
+# For funny things
