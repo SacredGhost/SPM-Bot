@@ -39,7 +39,6 @@ def search_enemy_by_name_or_card_num(query):
 async def enemy(ctx: commands.Context, *, search: str = ''):
     print('Enemy command executed')
     
-    # Remove the command prefix and leading whitespace from the search query
     search_query = search.strip()
     
     specific_entry = search_enemy_by_name_or_card_num(search_query)
@@ -60,38 +59,37 @@ async def enemy(ctx: commands.Context, *, search: str = ''):
         else:
             print("CardData not available for this enemy.")
         print(f"Tattle: {specific_entry.EnemyData.Tattle}")
-
-        # Debugging specific_entry.EnemyDrops
         print(f"EnemyDrops: {specific_entry.EnemyDrops}")
+        print(f"DropPercentage: {specific_entry.DropPercent}")
         
         # Check if there are any drops
         if specific_entry.EnemyDrops:
             # Generate drop_info only if there are drops
-            drop_info = "\n".join([f"Item Name: {drop.ItemName}\nItem ID: 0x{drop.ItemID:03X}\nItem Weight: {drop.ItemWeight}" for drop in specific_entry.EnemyDrops if drop.ItemName])
+            drop_info = "\n".join([f"{drop.ItemName}\nItem ID: 0x{drop.ItemID:03X}\nItem Weight: {drop.ItemWeight}" for drop in specific_entry.EnemyDrops if drop.ItemName])
         else:
             drop_info = "No drops for this enemy."
             
-        # Create the embed as before
         embed = discord.Embed(title=f"Enemy Info: {specific_entry.EnemyName}", color=0x00FF00)
-        embed.add_field(name="EnemyHex", value=f"0x{specific_entry.EnemyID:03X}", inline=False)
-        embed.add_field(name="HP", value=specific_entry.EnemyData.HP, inline=True)
-        embed.add_field(name="Attack", value=specific_entry.EnemyData.Atk, inline=True)
-        embed.add_field(name="Defense", value=specific_entry.EnemyData.Def, inline=True)
-        embed.add_field(name="Icon", value=specific_entry.EnemyData.icon, inline=False)
+        embed = discord.Embed(title=f"{specific_entry.EnemyName}", description=f"HP: {specific_entry.EnemyData.HP} | Attack: {specific_entry.EnemyData.Atk} | Defence: {specific_entry.EnemyData.Def}", color=0xDB8773) #0xDB8773
+        embed.set_thumbnail(url=specific_entry.EnemyData.icon)
         if specific_entry.EnemyData.CardData:
-            embed.add_field(name="CardNumber", value=specific_entry.EnemyData.CardData.CardNum, inline=True)
+            embed.add_field(name="Card Number", value=specific_entry.EnemyData.CardData.CardNum, inline=True)
             embed.add_field(name="Description", value=specific_entry.EnemyData.CardData.Description, inline=False)
+            embed.add_field(name="Tattle", value=specific_entry.EnemyData.Tattle, inline=True)
         else:
             embed.add_field(name="CardData", value="Not available for this enemy.", inline=False)
-        embed.add_field(name="Tattle", value=specific_entry.EnemyData.Tattle, inline=False)
+            embed.add_field(name="Tattle", value=('"', specific_entry.EnemyData.Tattle,'"'), inline=False)
+        embed.add_field(name="Enemy Hex", value=f"0x{specific_entry.EnemyID:03X}", inline=False)
         if specific_entry.EnemyDrops and any(drop.ItemName for drop in specific_entry.EnemyDrops):
             # Generate drop_info only if there are drops with non-empty names
-            drop_info = "\n".join([f"Item Name: {drop.ItemName}\nItem ID: 0x{drop.ItemID:03X}\nItem Weight: {drop.ItemWeight}" for drop in specific_entry.EnemyDrops if drop.ItemName])
+            drop_info = "\n".join([f"{drop.ItemName}, {drop.ItemWeight}" for drop in specific_entry.EnemyDrops if drop.ItemName])
         else:
             drop_info = "No drops for this enemy."
-        embed.add_field(name="Enemy Drops", value=drop_info, inline=False)
+        embed.add_field(name="Enemy Drops + Weight", value=drop_info, inline=True)
+        ConvertedDropPercent = specific_entry.DropPercent * 100
+        print(ConvertedDropPercent)
+        embed.add_field(name="Drop Percentage", value=f"{int(ConvertedDropPercent)}%", inline=True)
         
-        # Send the embed
         await ctx.send(embed=embed)
     else:
         print(f"Entry not found for query: {search_query}")
