@@ -73,7 +73,7 @@ notified_runs = load_notified_runs()
 
 def send_discord_webhook(run_id):
     webhook_url = f"{file_content}"
-    message = f'<@&480158412064292864> New run for {string_game_name} - {string_category_name} is avalible for verification!' # <@&480158412064292864>
+    message = f'<@&480158412064292864> New run for {string_game_name} - {string_category_name} is available for verification!' # <@&480158412064292864>
     payload = {'content': message}
     response = requests.post(webhook_url, json=payload)
 
@@ -147,6 +147,6 @@ while True:
         endpoint = endpoint2
     elif endpoint == endpoint2:
         endpoint = endpoint1
-        
+
     if endpoint == endpoint2:
         time.sleep(60)
